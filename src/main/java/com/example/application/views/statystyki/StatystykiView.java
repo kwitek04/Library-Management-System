@@ -16,10 +16,23 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
+
+import com.github.appreciated.apexcharts.ApexCharts;
+import com.github.appreciated.apexcharts.ApexChartsBuilder;
+import com.github.appreciated.apexcharts.config.YAxis;
+import com.github.appreciated.apexcharts.config.yaxis.Labels;
+import com.github.appreciated.apexcharts.config.builder.ChartBuilder;
+import com.github.appreciated.apexcharts.config.builder.DataLabelsBuilder;
+import com.github.appreciated.apexcharts.config.builder.LegendBuilder;
+import com.github.appreciated.apexcharts.config.builder.PlotOptionsBuilder;
+import com.github.appreciated.apexcharts.config.builder.XAxisBuilder;
+import com.github.appreciated.apexcharts.config.chart.Type;
+import com.github.appreciated.apexcharts.config.legend.Position;
+import com.github.appreciated.apexcharts.config.plotoptions.builder.BarBuilder;
+import com.github.appreciated.apexcharts.helper.Series;
 
 import java.time.LocalDate;
 
@@ -29,7 +42,7 @@ import java.time.LocalDate;
  */
 @RolesAllowed("KIEROWNIK")
 @Route(value = "statystyki", layout = MainLayout.class)
-@PageTitle("Statystyki | Biblioteka")
+@PageTitle("Statystyki | Wypożyczalnia książek")
 public class StatystykiView extends VerticalLayout {
 
     private final BookService bookService;
@@ -149,54 +162,92 @@ public class StatystykiView extends VerticalLayout {
         long sWRenowacji = bookService.countKsiazkiByStatus(StatusKsiazki.W_RENOWACJI);
         long sWycofana = bookService.countKsiazkiByStatus(StatusKsiazki.WYCOFANA);
 
-        long total = booksTotal;
-
-        if (total > 0) {
-            statusChartContainer.add(createBar("Dostępne", sDostepna, total, "var(--lumo-success-color)"));
-            statusChartContainer.add(createBar("Wypożyczone", sWypozyczona, total, "var(--lumo-error-color)"));
-            statusChartContainer.add(createBar("Zarezerwowane", sZarezerwowana, total, "var(--lumo-primary-color)"));
-            statusChartContainer.add(createBar("Do odłożenia na półkę", sDoOdlozenia, total, "#6200EA"));
-            statusChartContainer.add(createBar("W kontroli", sWKontroli, total, "#FFD600"));
-            statusChartContainer.add(createBar("W renowacji", sWRenowacji, total, "#FF6D00"));
-            statusChartContainer.add(createBar("Wycofane", sWycofana, total, "var(--lumo-contrast-50pct)"));
+        if (booksTotal > 0) {
+            ApexCharts bookStatusChart = new ApexChartsBuilder()
+                    .withChart(ChartBuilder.get()
+                            .withType(Type.DONUT)
+                            .withBackground("transparent")
+                            .withDropShadow(com.github.appreciated.apexcharts.config.chart.builder.DropShadowBuilder.get()
+                                    .withEnabled(true)
+                                    .withTop(4.0)
+                                    .withLeft(0.0)
+                                    .withBlur(5.0)
+                                    .withOpacity(0.15)
+                                    .build())
+                            .build())
+                    .withLabels("Dostępne", "Wypożyczone", "Zarezerw.", "Do odłożenia", "W kontroli", "W renowacji", "Wycofane")
+                    .withSeries((double)sDostepna, (double)sWypozyczona, (double)sZarezerwowana, (double)sDoOdlozenia, (double)sWKontroli, (double)sWRenowacji, (double)sWycofana)
+                    .withLegend(LegendBuilder.get().withPosition(Position.BOTTOM).build())
+                    .withColors("#00E396", "#FF4560", "#008FFB", "#775DD0", "#FEB019", "#FF9800", "#A3A4A8")
+                    .withStroke(com.github.appreciated.apexcharts.config.builder.StrokeBuilder.get()
+                            .withShow(true)
+                            .withWidth(3.0)
+                            .withColors("transparent")
+                            .build())
+                    .build();
+            bookStatusChart.setWidth("100%");
+            bookStatusChart.setHeight("350px");
+            bookStatusChart.getStyle().set("margin-top", "15px");
+            statusChartContainer.add(bookStatusChart);
         } else {
             statusChartContainer.add(new Span("Brak książek w systemie."));
         }
 
         activityChartContainer.removeAll();
         activityChartContainer.add(new H4("Wypożyczenia i zwroty"));
-        long maxActivity = Math.max(wypozyczenia, zwroty);
-        if (maxActivity == 0) maxActivity = 1;
 
-        activityChartContainer.add(createBar("Wypożyczenia", wypozyczenia, maxActivity, "blue"));
-        activityChartContainer.add(createBar("Zwroty", zwroty, maxActivity, "green"));
+        ApexCharts barChart = new ApexChartsBuilder()
+                .withChart(ChartBuilder.get()
+                        .withType(Type.BAR)
+                        .withBackground("transparent")
+                        .withToolbar(com.github.appreciated.apexcharts.config.chart.builder.ToolbarBuilder.get().withShow(false).build())
+                        .build())
+                .withPlotOptions(PlotOptionsBuilder.get()
+                        .withBar(BarBuilder.get()
+                                .withHorizontal(false)
+                                .withColumnWidth("30%")
+                                .withDistributed(true)
+                                .build())
+                        .build())
+                .withDataLabels(DataLabelsBuilder.get()
+                        .withEnabled(true)
+                        .withOffsetY(-25.0)
+                        .build())
+                .withSeries(new Series<Double>("Ilość", (double)wypozyczenia, (double)zwroty))
+                .withXaxis(XAxisBuilder.get().withCategories("Wypożyczenia", "Zwroty").build())
+                .withFill(com.github.appreciated.apexcharts.config.builder.FillBuilder.get()
+                        .withType("gradient")
+                        .withGradient(com.github.appreciated.apexcharts.config.fill.builder.GradientBuilder.get()
+                                .withShade("light")
+                                .withType("vertical")
+                                .withOpacityFrom(0.9)
+                                .withOpacityTo(0.6)
+                                .withStops(0.0, 100.0)
+                                .build())
+                        .build())
+                .withColors("#008FFB", "#00E396")
+                .withLegend(LegendBuilder.get().withShow(false).build())
+                .build();
+
+        YAxis yAxis = new YAxis();
+        yAxis.setDecimalsInFloat(0.0);
+        Labels yLabels = new Labels();
+        yLabels.setFormatter("function(val) { return Math.round(val).toString(); }");
+        yAxis.setLabels(yLabels);
+        barChart.setYaxis(new YAxis[]{yAxis});
+
+        barChart.setWidth("100%");
+        barChart.setHeight("350px");
+        barChart.getStyle().set("margin-top", "15px");
+
+        activityChartContainer.add(barChart);
     }
 
     private void styleContainer(VerticalLayout layout) {
-        layout.getStyle().set("background", "white")
+        layout.getStyle().set("background-color", "var(--lumo-surface-color)")
                 .set("padding", "20px")
                 .set("border-radius", "10px")
                 .set("box-shadow", "0 2px 5px rgba(0,0,0,0.1)");
-    }
-
-    private VerticalLayout createBar(String label, long value, long max, String color) {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setSpacing(false);
-        layout.setPadding(false);
-
-        HorizontalLayout info = new HorizontalLayout();
-        info.setWidthFull();
-        info.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
-        info.add(new Span(label));
-        info.add(new Span(String.valueOf(value)));
-
-        ProgressBar progressBar = new ProgressBar();
-        progressBar.setValue((double) value / max);
-        progressBar.getStyle().set("--lumo-primary-color", color);
-        progressBar.setHeight("10px");
-
-        layout.add(info, progressBar);
-        return layout;
     }
 
     private VerticalLayout createCard(String title, Span countSpan, VaadinIcon icon, String colorName) {
@@ -206,7 +257,7 @@ public class StatystykiView extends VerticalLayout {
         card.setPadding(true);
         card.setWidth("30%");
 
-        card.getStyle().set("background-color", "#ffffff");
+        card.getStyle().set("background-color", "var(--lumo-surface-color)");
         card.getStyle().set("box-shadow", "0 4px 6px rgba(0,0,0,0.1)");
         card.getStyle().set("border-radius", "12px");
         card.getStyle().set("border-left", "5px solid " + colorName);
@@ -215,9 +266,9 @@ public class StatystykiView extends VerticalLayout {
         iconSpan.getStyle().set("color", colorName).set("font-size", "1.5rem");
 
         Span titleSpan = new Span(title);
-        titleSpan.getStyle().set("font-size", "0.9rem").set("color", "#666");
+        titleSpan.getStyle().set("font-size", "0.9rem").set("color", "var(--lumo-secondary-text-color)");
 
-        countSpan.getStyle().set("font-size", "2.5rem").set("font-weight", "bold").set("color", "#333");
+        countSpan.getStyle().set("font-size", "2.5rem").set("font-weight", "bold").set("color", "var(--lumo-body-text-color)");
 
         HorizontalLayout header = new HorizontalLayout(iconSpan, titleSpan);
         header.setAlignItems(FlexComponent.Alignment.CENTER);

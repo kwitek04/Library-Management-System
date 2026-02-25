@@ -190,7 +190,7 @@ public class KsiazkiForm extends FormLayout {
         autorzy.setRequired(true);
         autorzy.setItems(dostepniAutorzy);
         autorzy.setItemLabelGenerator(autor -> autor.getImie() + " " + autor.getNazwisko());
-        autorzy.setPlaceholder("Wpisz autora i wciśnij ENTER...");
+        autorzy.setPlaceholder("Dodaj autora...");
         autorzy.setHelperText("Aby dodać nowego autora, wpisz imię i nazwisko, a następnie wciśnij Enter.");
         autorzy.setAllowCustomValue(true);
         autorzy.addCustomValueSetListener(e -> addNewAutor(e.getDetail()));

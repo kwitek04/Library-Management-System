@@ -23,7 +23,7 @@ import java.util.Locale;
 
 @AnonymousAllowed
 @Route("rejestracja")
-@PageTitle("Załóż konto | Biblioteka")
+@PageTitle("Załóż konto | Wypożyczalnia książek")
 public class RejestracjaView extends VerticalLayout {
 
     private final UserService userService;

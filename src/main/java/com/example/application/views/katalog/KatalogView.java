@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @AnonymousAllowed
 @Route(value = "katalog", layout = MainLayout.class)
-@PageTitle("Katalog | Biblioteka")
+@PageTitle("Katalog | Wypożyczalnia książek")
 public class KatalogView extends VerticalLayout {
 
     private final BookService bookService;

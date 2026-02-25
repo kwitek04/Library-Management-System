@@ -24,7 +24,7 @@ import jakarta.annotation.security.RolesAllowed;
  */
 @RolesAllowed({"MAGAZYNIER"})
 @Route(value = "do-odlozenia", layout = MainLayout.class)
-@PageTitle("Książki do odłożenia | Magazyn")
+@PageTitle("Książki do odłożenia | Wypożyczalnia książek")
 public class KsiazkiDoOdlozeniaView extends VerticalLayout {
 
     private final BookService bookService;

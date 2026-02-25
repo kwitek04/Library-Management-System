@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @RolesAllowed({"USER"})
 @Route(value = "kary", layout = MainLayout.class)
-@PageTitle("Kary i Płatności | Biblioteka")
+@PageTitle("Kary i opłaty | Wypożyczalnia książek")
 public class KaryView extends VerticalLayout {
 
     private final RentalService rentalService;
@@ -67,20 +67,22 @@ public class KaryView extends VerticalLayout {
                         .map(wk -> wk.getKsiazka().getDaneKsiazki().getTytul())
                         .collect(Collectors.joining(", ")))
                 .setHeader("Książka")
-                .setAutoWidth(true);
+                .setAutoWidth(true)
+                .setSortable(true);
 
         grid.addColumn(Wypozyczenie::getTerminZwrotu)
                 .setHeader("Termin zwrotu")
                 .setSortable(true);
 
         grid.addColumn(w -> w.getDataOddania() != null ? w.getDataOddania().toString() : "Nie oddano")
-                .setHeader("Data oddania");
+                .setHeader("Data oddania")
+                .setSortable(true);
 
         grid.addComponentColumn(w -> {
             Span karaSpan = new Span(String.format("%.2f zł", w.getKara()));
             karaSpan.getElement().getThemeList().add("badge error");
             return karaSpan;
-        }).setHeader("Naliczona kara");
+        }).setHeader("Naliczona kara").setSortable(true);
 
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
     }

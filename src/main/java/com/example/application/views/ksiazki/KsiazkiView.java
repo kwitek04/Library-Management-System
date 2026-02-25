@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @RolesAllowed("BIBLIOTEKARZ")
 @Route(value = "ksiazki", layout = MainLayout.class)
-@PageTitle("Książki | Biblioteka")
+@PageTitle("Lista książek | Wypożyczalnia książek")
 public class KsiazkiView extends VerticalLayout {
 
     private final BookService bookService;

@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap&subset=latin-ext');
 
-/* Base & Variables */
+/* ======================================================
+   Base & Variables
+   ====================================================== */
 :root {
     --lumo-font-family: 'Inter', sans-serif;
     --lumo-button-border-radius: 8px;
@@ -18,7 +20,9 @@ a[highlight] {
     text-decoration: underline;
 }
 
-/* Dark Theme Overrides */
+/* ======================================================
+   Dark Theme Overrides
+   ====================================================== */
 [theme~="dark"] {
     --lumo-base-color: #131314;
     --lumo-surface-color: #1e1f20;
@@ -36,7 +40,9 @@ a[highlight] {
     background-color: var(--lumo-surface-color);
 }
 
-/* App Layout & Header */
+/* ======================================================
+   App Layout & Header
+   ====================================================== */
 vaadin-app-layout {
     --vaadin-app-layout-drawer-width: 310px !important;
 }
@@ -60,7 +66,9 @@ vaadin-app-layout::part(drawer),
     transform: translateX(-50%) scale(0.97) !important;
 }
 
-/* Theme Toggle Switch */
+/* ======================================================
+   Theme Toggle Switch
+   ====================================================== */
 .theme-toggle {
     width: 60px;
     height: 30px;
@@ -124,7 +132,9 @@ vaadin-app-layout::part(drawer),
     background-color: #1a1a1a;
 }
 
-/* Side Navigation */
+/* ======================================================
+   Side Navigation
+   ====================================================== */
 vaadin-side-nav-item {
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.2s ease !important;
     border-radius: 8px;
@@ -149,7 +159,9 @@ vaadin-side-nav-item[current] {
     box-shadow: inset 4px 0 0 0 var(--lumo-body-text-color);
 }
 
-/* Buttons & Drawer Toggle */
+/* ======================================================
+   Buttons & Drawer Toggle
+   ====================================================== */
 vaadin-button,
 vaadin-drawer-toggle {
     cursor: pointer !important;
@@ -216,7 +228,9 @@ vaadin-button:active {
     color: #ffffff !important;
 }
 
-/* Book Cards */
+/* ======================================================
+   Book Cards
+   ====================================================== */
 .book-card {
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-color 0.3s ease, box-shadow 0.3s ease !important;
     border-radius: 12px;
@@ -231,9 +245,16 @@ vaadin-button:active {
 }
 
 .book-card:active {
-    transform: translateY(0) scale(0.98) !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) scale(1) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
     background-color: var(--lumo-contrast-10pct) !important;
+    transition-duration: 0.1s !important;
+}
+
+.book-card:active .book-cover-image {
+    transform: scale(1.02) translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+    transition-duration: 0.1s !important;
 }
 
 .book-cover-image {
@@ -254,7 +275,9 @@ vaadin-button:active {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
-/* Data Grids */
+/* ======================================================
+   Data Grids
+   ====================================================== */
 .katalog-grid::part(header-cell),
 .katalog-books::part(header-cell) {
     display: none !important;
@@ -333,7 +356,9 @@ vaadin-grid:not(.katalog-grid):not(.katalog-books)::part(row)[selected] {
     box-shadow: inset 4px 0 0 0 var(--lumo-body-text-color) !important;
 }
 
-/* Responsive Layout */
+/* ======================================================
+   Responsive Layout
+   ====================================================== */
 @media all and (max-width: 1100px) {
   .list-view.editing .toolbar,
   .list-view.editing .contact-grid,
@@ -341,3 +366,244 @@ vaadin-grid:not(.katalog-grid):not(.katalog-books)::part(row)[selected] {
     display: none;
   }
 }
+
+/* ======================================================
+   ApexCharts Customization
+   ====================================================== */
+[theme~="dark"] .apexcharts-text tspan,
+[theme~="dark"] .apexcharts-datalabel-value,
+[theme~="dark"] .apexcharts-legend-text {
+    fill: var(--lumo-body-text-color) !important;
+    color: var(--lumo-body-text-color) !important;
+}
+
+[theme~="dark"] .apexcharts-gridline {
+    stroke: rgba(255, 255, 255, 0.05) !important;
+}
+
+.apexcharts-datalabel {
+    filter: none !important;
+    text-shadow: none !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    fill: #888888 !important;
+}
+
+.apexcharts-tooltip {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    color: #333 !important;
+    transition: all 0.2s ease !important;
+}
+
+[theme~="dark"] .apexcharts-tooltip {
+    background: rgba(30, 31, 32, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    color: var(--lumo-body-text-color) !important;
+}
+
+.apexcharts-tooltip-title {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+    font-weight: bold !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+}
+
+[theme~="dark"] .apexcharts-tooltip-title {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.apexcharts-pie-series path {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease !important;
+    transform-origin: center;
+}
+
+.apexcharts-pie-series:hover path {
+    filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.25));
+    transform: scale(1.04);
+}
+
+[theme~="dark"] .apexcharts-pie-series:hover path {
+    filter: drop-shadow(0px 8px 16px rgba(0,0,0,0.6));
+}
+
+.statystyki-view .card,
+.statystyki-view > vaadin-horizontal-layout:last-child > vaadin-vertical-layout {
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.statystyki-view .card:hover,
+.statystyki-view > vaadin-horizontal-layout:last-child > vaadin-vertical-layout:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important;
+}
+
+[theme~="dark"] .statystyki-view .card:hover,
+[theme~="dark"] .statystyki-view > vaadin-horizontal-layout:last-child > vaadin-vertical-layout:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.4) !important;
+}
+
+/* ======================================================
+   Bestsellers Carousel (Coverflow)
+   ====================================================== */
+.carousel-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.bestsellers-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 40px calc(50% - 85px) 35px calc(50% - 85px) !important;
+    gap: 30px;
+    scroll-behavior: smooth;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 25%, black 75%, transparent 100%);
+}
+
+.bestsellers-carousel::-webkit-scrollbar {
+    display: none;
+}
+.bestsellers-carousel {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.carousel-card {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    width: 170px;
+    position: relative;
+    cursor: pointer;
+    transform: scale(0.8);
+    opacity: 0.3;
+    filter: brightness(50%) grayscale(60%);
+    transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1.2), opacity 0.8s ease, filter 0.8s ease;
+}
+
+.carousel-card.side-1 {
+    transform: scale(0.95);
+    opacity: 0.7;
+    filter: brightness(75%) grayscale(25%);
+}
+
+.carousel-card.active-card {
+    transform: scale(1.15);
+    opacity: 1;
+    filter: brightness(100%) grayscale(0%);
+    z-index: 2;
+}
+
+.carousel-cover {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.8s ease;
+}
+
+.carousel-card.active-card .carousel-cover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+[theme~="dark"] .carousel-card.active-card .carousel-cover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.carousel-info {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2px;
+    width: 300%;
+    margin-left: -100%;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.8s ease;
+    z-index: 10;
+}
+
+.carousel-card.active-card .carousel-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.carousel-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--lumo-body-text-color);
+    white-space: nowrap;
+}
+
+.carousel-author {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--lumo-primary-color);
+    white-space: nowrap;
+}
+
+.carousel-details {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--lumo-secondary-text-color);
+    white-space: nowrap;
+}
+
+/* ======================================================
+   Carousel Navigation Buttons
+   ====================================================== */
+.carousel-nav-btn {
+    position: absolute;
+    top: 50%;
+    margin-top: -30px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    color: var(--lumo-contrast-50pct);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.carousel-nav-btn vaadin-icon {
+    width: 45px;
+    height: 45px;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.carousel-nav-btn:hover {
+    color: var(--lumo-primary-color);
+}
+
+.carousel-nav-btn:hover vaadin-icon {
+    transform: scale(1.3);
+}
+
+.carousel-nav-btn:active vaadin-icon {
+    transform: scale(0.9);
+}
+
+[theme~="dark"] .carousel-nav-btn {
+    color: rgba(255, 255, 255, 0.4);
+}
+[theme~="dark"] .carousel-nav-btn:hover {
+    color: white;
+}
+
+.prev-btn { left: 0; }
+.next-btn { right: 0; }

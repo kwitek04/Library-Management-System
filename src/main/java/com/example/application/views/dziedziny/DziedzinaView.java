@@ -18,7 +18,7 @@ import jakarta.annotation.security.RolesAllowed;
 
 @RolesAllowed("KIEROWNIK")
 @Route(value = "dziedziny", layout = MainLayout.class)
-@PageTitle("Dziedziny | Biblioteka")
+@PageTitle("Dziedziny | Wypożyczalnia książek")
 public class DziedzinaView extends VerticalLayout {
 
     private final BookService bookService;
@@ -92,7 +92,7 @@ public class DziedzinaView extends VerticalLayout {
                 dialog.open();
             });
             return deleteBtn;
-        }).setHeader("").setFlexGrow(0).setWidth("80px");
+        }).setHeader("Akcje").setFlexGrow(0).setAutoWidth(true);
     }
 
     private void openPoddziedzinaDialog(Dziedzina dziedzina) {

@@ -30,7 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @RolesAllowed("KIEROWNIK")
 @Route(value = "wycofanie", layout = MainLayout.class)
-@PageTitle("Książki do wycofania | Zarządzanie")
+@PageTitle("Książki do wycofania | Wypożyczalnia książek")
 public class KsiazkiDoWycofaniaView extends VerticalLayout {
 
     private final BookService bookService;

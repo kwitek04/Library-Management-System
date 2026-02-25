@@ -15,7 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 
 @RolesAllowed({"BIBLIOTEKARZ"})
 @Route(value = "aktywacja", layout = MainLayout.class)
-@PageTitle("Aktywacja kont | Biblioteka")
+@PageTitle("Aktywacja kont | Wypożyczalnia książek")
 public class OczekujaceKontaView extends VerticalLayout {
 
     private final UserService userService;

@@ -15,11 +15,16 @@ public class SecurityService {
 
     public UserDetails getAuthenticatedUser() {
         SecurityContext context = SecurityContextHolder.getContext();
-        Object principal = context.getAuthentication().getPrincipal();
+        org.springframework.security.core.Authentication authentication = context.getAuthentication();
+
+        if (authentication == null) {
+            return null;
+        }
+
+        Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
             return (UserDetails) principal;
         }
-        // Anonymous or no authentication.
         return null;
     }
 

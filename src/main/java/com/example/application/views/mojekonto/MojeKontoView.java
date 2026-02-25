@@ -13,6 +13,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -28,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @PermitAll
 @Route(value = "konto", layout = MainLayout.class)
-@PageTitle("Moje Konto | Biblioteka")
+@PageTitle("Moje klonto | Wypożyczalnia książek")
 public class MojeKontoView extends VerticalLayout {
 
     private final UserService userService;
@@ -73,10 +74,13 @@ public class MojeKontoView extends VerticalLayout {
         avatar.getStyle().set("font-size", "1.2rem");
 
         H2 header = new H2(fullName);
+        header.getStyle().set("margin-top", "10px");
+        header.getStyle().set("margin-bottom", "5px");
 
         VerticalLayout infoLayout = new VerticalLayout();
         infoLayout.setAlignItems(Alignment.CENTER);
         infoLayout.setSpacing(false);
+        infoLayout.setPadding(false);
 
         infoLayout.add(
                 createDetailRow(VaadinIcon.USER, "Rola: ", role),
@@ -84,9 +88,12 @@ public class MojeKontoView extends VerticalLayout {
                 createDetailRow(VaadinIcon.PHONE, "Telefon: ", phone)
         );
 
-        Button changePasswordBtn = new Button("Zmień hasło", VaadinIcon.KEY.create());
+        Icon keyIcon = VaadinIcon.KEY.create();
+        keyIcon.getStyle().set("transform", "rotate(180deg)");
+
+        Button changePasswordBtn = new Button("Zmień hasło", keyIcon);
         changePasswordBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        changePasswordBtn.getStyle().set("margin-top", "20px");
+        changePasswordBtn.getStyle().set("margin-top", "10px");
         changePasswordBtn.addClickListener(e -> openChangePasswordDialog());
 
         add(avatar, header, infoLayout, changePasswordBtn);
@@ -95,7 +102,7 @@ public class MojeKontoView extends VerticalLayout {
     private HorizontalLayout createDetailRow(VaadinIcon icon, String label, String value) {
         HorizontalLayout row = new HorizontalLayout(icon.create(), new Span(label), new Span(value));
         row.setAlignItems(Alignment.CENTER);
-        row.getStyle().set("margin-top", "10px");
+        row.getStyle().set("margin-top", "5px");
         return row;
     }
 

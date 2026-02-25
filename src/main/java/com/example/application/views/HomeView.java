@@ -8,8 +8,8 @@ import com.example.application.data.service.RentalService;
 import com.example.application.data.service.UserService;
 import com.example.application.security.SecurityService;
 import com.example.application.views.katalog.KsiazkaDetailsDialog;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -20,12 +20,16 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.vaadin.flow.component.dependency.JavaScript;
+import com.vaadin.flow.component.dependency.StyleSheet;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +40,9 @@ import java.util.stream.Collectors;
  */
 @AnonymousAllowed
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Strona Główna | Biblioteka")
+@PageTitle("Strona Główna | Wypożyczalnia książek")
+@StyleSheet("https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css")
+@JavaScript("https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js")
 public class HomeView extends VerticalLayout {
 
     private final BookService bookService;
@@ -63,7 +69,11 @@ public class HomeView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         addClassName("home-view");
 
-        add(createSearchBar());
+        add(createBestsellersCarousel());
+
+        HorizontalLayout searchBar = createSearchBar();
+        searchBar.getStyle().set("margin-top", "0px");
+        add(searchBar);
 
         configureGrid();
         add(grid);
@@ -72,21 +82,26 @@ public class HomeView extends VerticalLayout {
     }
 
     private HorizontalLayout createSearchBar() {
-        searchField.setPlaceholder("Szukaj po tytule, autorze, ISBN...");
-        searchField.setClearButtonVisible(true);
-        searchField.setWidth("60%");
+        searchField.setPlaceholder("Szukaj po tytule, autorze, lub ISBN...");
         searchField.setPrefixComponent(VaadinIcon.SEARCH.create());
+        searchField.setClearButtonVisible(true);
+        searchField.getStyle().set("--vaadin-input-field-height", "var(--lumo-size-l)");
+        searchField.getStyle().set("font-size", "var(--lumo-font-size-l)");
+        searchField.setWidth("1000px");
+        searchField.setMaxWidth("90vw");
+        searchField.setValueChangeMode(ValueChangeMode.LAZY);
+        searchField.addValueChangeListener(e -> updateList());
 
-        Button searchButton = new Button("Szukaj", e -> updateList());
-        searchButton.addThemeVariants(com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY);
+        Button searchButton = new Button("Szukaj");
+        searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_LARGE);
+        searchButton.addClickListener(e -> updateList());
 
-        searchField.addKeyPressListener(Key.ENTER, e -> updateList());
+        HorizontalLayout layout = new HorizontalLayout(searchField, searchButton);
+        layout.setWidthFull();
+        layout.setJustifyContentMode(JustifyContentMode.CENTER);
+        layout.setAlignItems(Alignment.BASELINE);
 
-        HorizontalLayout toolbar = new HorizontalLayout(searchField, searchButton);
-        toolbar.setWidthFull();
-        toolbar.setJustifyContentMode(JustifyContentMode.CENTER);
-        toolbar.setAlignItems(Alignment.BASELINE);
-        return toolbar;
+        return layout;
     }
 
     private void configureGrid() {
@@ -216,6 +231,179 @@ public class HomeView extends VerticalLayout {
         badge.getStyle().set("padding", "0.5em 1em");
 
         return badge;
+    }
+
+    private com.vaadin.flow.component.Component createBestsellersCarousel() {
+        VerticalLayout container = new VerticalLayout();
+        container.setWidthFull();
+        container.setPadding(false);
+        container.setSpacing(false);
+        container.setAlignItems(Alignment.CENTER);
+
+        H3 title = new H3("Najpopularniejsze książki");
+        title.getStyle().set("margin", "10px 0 10px 0");
+        title.getStyle().set("text-align", "center");
+
+        Div carouselWrapper = new Div();
+        carouselWrapper.addClassName("carousel-wrapper");
+        carouselWrapper.setWidthFull();
+
+        HorizontalLayout carousel = new HorizontalLayout();
+        carousel.addClassName("bestsellers-carousel");
+        carousel.setId("bestsellers-carousel");
+        carousel.setWidthFull();
+        carousel.setSpacing(false);
+
+        List<Ksiazka> bestsellers = bookService.findBestsellers();
+        int listSize = bestsellers.size();
+
+        if (listSize > 0) {
+            for (int i = 0; i < 15; i++) {
+                for (Ksiazka ksiazka : bestsellers) {
+                    carousel.add(createCarouselCard(ksiazka));
+                }
+            }
+        }
+
+        Div prevButton = new Div(VaadinIcon.ANGLE_LEFT.create());
+        prevButton.addClassNames("carousel-nav-btn", "prev-btn");
+
+        Div nextButton = new Div(VaadinIcon.ANGLE_RIGHT.create());
+        nextButton.addClassNames("carousel-nav-btn", "next-btn");
+
+        carouselWrapper.add(prevButton, carousel, nextButton);
+        container.add(title, carouselWrapper);
+
+        if (listSize > 0) {
+            int middleIndexOffset = 200 * (listSize * 7);
+
+            com.vaadin.flow.component.UI.getCurrent().getPage().executeJs(
+                    "setTimeout(() => {" +
+                            "  const carousel = document.getElementById('bestsellers-carousel');" +
+                            "  if(!carousel) return;" +
+                            "  const cardWidth = 200;" +
+                            "  let autoPlayTimer;" +
+
+                            "  const updateCenter = () => {" +
+                            "    const rect = carousel.getBoundingClientRect();" +
+                            "    const center = rect.left + rect.width / 2;" +
+                            "    let closestIdx = -1;" +
+                            "    let closestDist = Infinity;" +
+                            "    const cards = Array.from(carousel.querySelectorAll('.carousel-card'));" +
+
+                            "    cards.forEach((card, idx) => {" +
+                            "      const box = card.getBoundingClientRect();" +
+                            "      const cardCenter = box.left + box.width / 2;" +
+                            "      const dist = Math.abs(center - cardCenter);" +
+                            "      if (dist < closestDist) {" +
+                            "        closestDist = dist;" +
+                            "        closestIdx = idx;" +
+                            "      }" +
+                            "    });" +
+
+                            "    cards.forEach((card, idx) => {" +
+                            "      card.classList.remove('active-card', 'side-1', 'side-2');" +
+                            "      const stepsAway = Math.abs(closestIdx - idx);" +
+                            "      if (stepsAway === 0) card.classList.add('active-card');" +
+                            "      else if (stepsAway === 1) card.classList.add('side-1');" +
+                            "      else card.classList.add('side-2');" +
+                            "    });" +
+                            "  };" +
+
+                            "  carousel.addEventListener('scroll', updateCenter);" +
+                            "  carousel.style.scrollBehavior = 'auto';" +
+                            "  carousel.scrollLeft = " + middleIndexOffset + ";" +
+                            "  updateCenter();" +
+                            "  carousel.style.scrollBehavior = 'smooth';" +
+
+                            "  function startAutoPlay() {" +
+                            "    clearInterval(autoPlayTimer);" +
+                            "    autoPlayTimer = setInterval(() => {" +
+                            "      if (!carousel.matches(':hover')) {" +
+                            "        carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });" +
+                            "      }" +
+                            "    }, 5000);" +
+                            "  }" +
+
+                            "  const prevBtn = carousel.parentElement.querySelector('.prev-btn');" +
+                            "  const nextBtn = carousel.parentElement.querySelector('.next-btn');" +
+                            "  if(prevBtn) prevBtn.onclick = () => {" +
+                            "    carousel.scrollBy({ left: -cardWidth, behavior: 'smooth' });" +
+                            "    startAutoPlay();" +
+                            "  };" +
+                            "  if(nextBtn) nextBtn.onclick = () => {" +
+                            "    carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });" +
+                            "    startAutoPlay();" +
+                            "  };" +
+
+                            "  startAutoPlay();" +
+                            "}, 300);"
+            );
+        }
+
+        return container;
+    }
+
+    private Div createCarouselCard(Ksiazka ksiazka) {
+        Div card = new Div();
+        card.addClassName("carousel-card");
+
+        Image coverImage;
+        byte[] okladka = ksiazka.getDaneKsiazki().getOkladka();
+        if (okladka != null && okladka.length > 0) {
+            StreamResource resource = new StreamResource("cov_" + ksiazka.getId(), () -> new java.io.ByteArrayInputStream(okladka));
+            coverImage = new Image(resource, "Okładka");
+        } else {
+            coverImage = new Image("https://placehold.co/150x220?text=Brak+okładki", "Brak");
+        }
+        coverImage.addClassName("carousel-cover");
+
+        Div info = new Div();
+        info.addClassName("carousel-info");
+
+        Span tytul = new Span(ksiazka.getDaneKsiazki().getTytul());
+        tytul.addClassName("carousel-title");
+        info.add(tytul);
+
+        String autorStr = "Nieznany autor";
+        if (ksiazka.getDaneKsiazki().getAutorzy() != null && !ksiazka.getDaneKsiazki().getAutorzy().isEmpty()) {
+            autorStr = ksiazka.getDaneKsiazki().getAutorzy().stream()
+                    .map(a -> a.getImie() + " " + a.getNazwisko())
+                    .collect(java.util.stream.Collectors.joining(", "));
+        }
+
+        Span autor = new Span(autorStr);
+        autor.addClassName("carousel-author");
+        info.add(autor);
+
+        String wydawnictwo = ksiazka.getDaneKsiazki().getWydawnictwo() != null ? ksiazka.getDaneKsiazki().getWydawnictwo() : "-";
+        String rok = ksiazka.getDaneKsiazki().getRokWydania() != null ? String.valueOf(ksiazka.getDaneKsiazki().getRokWydania()) : "-";
+        String isbn = ksiazka.getDaneKsiazki().getIsbn() != null ? ksiazka.getDaneKsiazki().getIsbn() : "-";
+
+        Span daneWydawnicze = new Span("Wydawnictwo: " + wydawnictwo + " | Rok: " + rok + " | ISBN: " + isbn);
+        daneWydawnicze.addClassName("carousel-details");
+        info.add(daneWydawnicze);
+
+        if (isCurrentUserStaff()) {
+            Span wypozyczenia = new Span("Wypożyczeń: " + ksiazka.getLicznikWypozyczen());
+            wypozyczenia.getElement().getThemeList().add("badge contrast primary small");
+            wypozyczenia.getStyle().set("margin-top", "6px");
+            info.add(wypozyczenia);
+        }
+
+        card.add(coverImage, info);
+        card.addClickListener(e -> new KsiazkaDetailsDialog(ksiazka, rentalService, currentUser).open());
+
+        return card;
+    }
+
+    private boolean isCurrentUserStaff() {
+        UserDetails userDetails = securityService.getAuthenticatedUser();
+        if (userDetails == null) return false;
+        return userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_KIEROWNIK") ||
+                        a.getAuthority().equals("ROLE_BIBLIOTEKARZ") ||
+                        a.getAuthority().equals("ROLE_MAGAZYNIER"));
     }
 
     private void updateList() {

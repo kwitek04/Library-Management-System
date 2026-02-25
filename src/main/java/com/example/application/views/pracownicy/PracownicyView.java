@@ -21,7 +21,7 @@ import jakarta.annotation.security.RolesAllowed;
  */
 @RolesAllowed("KIEROWNIK")
 @Route(value = "pracownicy", layout = MainLayout.class)
-@PageTitle("Lista pracowników")
+@PageTitle("Lista pracowników | Wypożyczalnia książek")
 public class PracownicyView extends VerticalLayout {
 
     private final UserService userService;
@@ -64,9 +64,6 @@ public class PracownicyView extends VerticalLayout {
         }).setHeader("Akcje").setAutoWidth(true).setFlexGrow(0);
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        grid.asSingleSelect().addValueChangeListener(event ->
-                editPracownicy(event.getValue()));
     }
 
     private HorizontalLayout getToolbar() {

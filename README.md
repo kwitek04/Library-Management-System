@@ -1,12 +1,26 @@
 # Wypożyczalnia książek z wolnym dostępem
 
-System zarządzania wypożyczalnią książek z wolnym dostępem stworzony w technologii Java (Spring Boot) oraz Vaadin. System usprawnia i automatyzuje działanie wypożyczalni książek. Aplikacja pozwala na rezerwację, wypożyczanie i zwrot książek. Dzięki zaimplementowanej logice biznesowej system automatycznie kontroluje limity wypożyczeń i rezerwacji, zarządza terminami oddania oraz nalicza kary za opóźnienia i zagubienia książek. Aplikacja wyróżnia się rozbudowanym podziałem na role dostarczając dedykowane funkcjonalności w zależnośći od roli przypisanej do użytkownika.  
+System zarządzania wypożyczalnią książek z wolnym dostępem stworzony w technologii Java (Spring Boot) oraz Vaadin. System usprawnia i automatyzuje działanie wypożyczalni książek. Aplikacja pozwala na rezerwację, wypożyczanie i zwrot książek. Dzięki zaimplementowanej logice biznesowej system automatycznie kontroluje limity wypożyczeń i rezerwacji, zarządza terminami oddania oraz nalicza kary za opóźnienia i zagubienia książek. Aplikacja wyróżnia się rozbudowanym podziałem na role, oraz nowoczesnym interfejsie użytkownika zaprojektowanym z myślą o wygodzie i czytelności.  
+
+## Zrzuty ekranu
+
+<div align="center">
+  <img src="docs/images/zrzut_ekranu_strona_glowna.jpeg" alt="Strona Główna" />
+  <p><i>Widok strony głównej z wyszukiwarką, oraz przewijaną listą najpopularniejszych książek.</i></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="docs/images/zrzut_ekranu_statystyki.jpeg" alt="Statystyki" />
+  <p><i>Panel statystyk i wykresów dostępny dla kierownika.</i></p>
+</div>
 
 ## Technologie
 
 Projekt wykorzystuje następujące technologie:
 * **Backend:** Java 25, Spring Boot 3.5, Spring Security, Spring Data JPA
-* **Frontend:** Vaadin 24 Flow
+* **Frontend:** Vaadin 24 Flow, CSS, JavaScript
 * **Baza danych:** PostgreSQL
 * **Migracje bazy:** Flyway
 * **Konteneryzacja:** Docker & Docker Compose

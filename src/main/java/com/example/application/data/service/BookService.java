@@ -194,4 +194,8 @@ public class BookService {
                 StatusKsiazki.WYCOFANA
         );
     }
+
+    public List<Ksiazka> findBestsellers() {
+        return ksiazkaRepository.findTop10ByStatusNotOrderByLicznikWypozyczenDesc(StatusKsiazki.WYCOFANA);
+    }
 }

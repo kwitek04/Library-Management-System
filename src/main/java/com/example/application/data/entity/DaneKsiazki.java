@@ -16,7 +16,7 @@ public class DaneKsiazki {
     private String isbn;
 
     @NotEmpty
-    @Size(max = 50)
+    @Size(max = 100)
     private String tytul;
 
     @NotEmpty

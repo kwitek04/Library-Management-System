@@ -112,7 +112,6 @@ public class KsiazkaDetailsDialog extends Dialog {
             ConfirmDialog dialog = new ConfirmDialog();
             dialog.setHeader("Potwierdzenie wypożyczenia");
             dialog.setText("Czy na pewno chcesz wypożyczyć książkę \"" + ksiazka.getDaneKsiazki().getTytul() + "\"?");
-
             dialog.setConfirmText("Wypożycz");
             dialog.setConfirmButtonTheme("primary");
             dialog.setCancelable(true);

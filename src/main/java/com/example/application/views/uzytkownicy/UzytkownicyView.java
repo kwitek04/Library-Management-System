@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @RolesAllowed({"BIBLIOTEKARZ"})
 @Route(value = "uzytkownicy", layout = MainLayout.class)
-@PageTitle("Lista użytkowników | Biblioteka")
+@PageTitle("Lista użytkowników | Wypożyczalnia książek")
 public class UzytkownicyView extends VerticalLayout {
 
     private final UserService userService;
@@ -87,7 +87,6 @@ public class UzytkownicyView extends VerticalLayout {
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        grid.asSingleSelect().addValueChangeListener(event -> editUzytkownik(event.getValue()));
     }
 
     private void openStatsDialog(Uzytkownik uzytkownik) {

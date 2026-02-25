@@ -22,7 +22,7 @@ import jakarta.annotation.security.RolesAllowed;
 
 @RolesAllowed({"MAGAZYNIER"})
 @Route(value = "kontrola-stanu", layout = MainLayout.class)
-@PageTitle("Kontrola Stanu | Magazyn")
+@PageTitle("Kontrola stanu | Wypożyczalnia książek")
 public class KontrolaStanuView extends VerticalLayout {
 
     private final BookService bookService;

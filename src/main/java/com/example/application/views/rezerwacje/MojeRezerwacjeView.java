@@ -12,6 +12,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @RolesAllowed({"USER"})
 @Route(value = "moje-rezerwacje", layout = MainLayout.class)
-@PageTitle("Moje Rezerwacje | Biblioteka")
+@PageTitle("Moje rezerwacje | Wypożyczalnia książek")
 public class MojeRezerwacjeView extends VerticalLayout {
 
     private final RentalService rentalService;
@@ -46,7 +47,7 @@ public class MojeRezerwacjeView extends VerticalLayout {
         addClassName("moje-rezerwacje-view");
 
         add(new H2("Moje zarezerwowane książki"));
-        add(new Span("Gdy weźmiesz książkę z półki, kliknij 'Odbierz', aby ją wypożyczyć."));
+        add(new Html("<span>Gdy weźmiesz książkę z półki, kliknij <i>Odbierz</i>, aby ją wypożyczyć.</span>"));
 
         configureGrid();
         add(grid);
@@ -66,10 +67,10 @@ public class MojeRezerwacjeView extends VerticalLayout {
                 rezerwacja.getZarezerwowaneKsiazki().stream()
                         .map(zk -> zk.getKsiazka().getDaneKsiazki().getTytul())
                         .collect(Collectors.joining(", "))
-        ).setHeader("Książki").setAutoWidth(true);
+        ).setHeader("Książki").setAutoWidth(true).setSortable(true);
 
-        grid.addColumn(Rezerwacja::getDataRezerwacji).setHeader("Data rezerwacji").setAutoWidth(true);
-        grid.addColumn(Rezerwacja::getWaznaDo).setHeader("Ważna do").setAutoWidth(true);
+        grid.addColumn(Rezerwacja::getDataRezerwacji).setHeader("Data rezerwacji").setAutoWidth(true).setSortable(true);
+        grid.addColumn(Rezerwacja::getWaznaDo).setHeader("Ważna do").setAutoWidth(true).setSortable(true);
 
         grid.addComponentColumn(rezerwacja -> {
             Span badge = new Span(rezerwacja.getStatus() != null ? rezerwacja.getStatus().getNazwa() : "Błąd");
@@ -83,7 +84,7 @@ public class MojeRezerwacjeView extends VerticalLayout {
                 badge.getElement().getThemeList().add("contrast");
             }
             return badge;
-        }).setHeader("Status").setAutoWidth(true);
+        }).setHeader("Status").setAutoWidth(true).setSortable(true);
 
         grid.addComponentColumn(rezerwacja -> {
             Button odbierzBtn = new Button("Odbierz");

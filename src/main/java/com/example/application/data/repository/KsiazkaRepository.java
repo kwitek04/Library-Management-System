@@ -21,7 +21,7 @@ public interface KsiazkaRepository extends JpaRepository<Ksiazka, Long> {
     @Query("select distinct k from Ksiazka k " +
             "join k.daneKsiazki d " +
             "left join d.autorzy a " +
-            "where (k.status <> :excludedStatus) and " + // <-- WYKLUCZENIE
+            "where (k.status <> :excludedStatus) and " +
             "(lower(d.tytul) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(d.isbn) like lower(concat('%', :searchTerm, '%')) " +
             "or lower(a.imie) like lower(concat('%', :searchTerm, '%')) " +
@@ -30,14 +30,11 @@ public interface KsiazkaRepository extends JpaRepository<Ksiazka, Long> {
 
     List<Ksiazka> findByStatusNot(StatusKsiazki status);
 
-    // 3. Filtrowanie po poddziedzinie (z wykluczeniem)
     List<Ksiazka> findByPoddziedzinaAndStatusNot(Poddziedzina poddziedzina, StatusKsiazki status);
 
-    // 4. Filtrowanie po dziedzinie (z wykluczeniem)
     @Query("select k from Ksiazka k where k.poddziedzina.dziedzina = :dziedzina and k.status <> :excludedStatus")
     List<Ksiazka> findByDziedzinaAndStatusNot(@Param("dziedzina") Dziedzina dziedzina, @Param("excludedStatus") StatusKsiazki excludedStatus);
 
-    // 5. Filtrowanie po autorze (z wykluczeniem)
     @Query("select k from Ksiazka k join k.daneKsiazki d join d.autorzy a where a = :autor and k.status <> :excludedStatus")
     List<Ksiazka> findByAutorAndStatusNot(@Param("autor") Autor autor, @Param("excludedStatus") StatusKsiazki excludedStatus);
 
@@ -46,6 +43,8 @@ public interface KsiazkaRepository extends JpaRepository<Ksiazka, Long> {
     List<Ksiazka> findByStanFizycznyAndStatusNot(StanFizyczny stan, StatusKsiazki status);
 
     List<Ksiazka> findByStatus(StatusKsiazki status);
+
+    List<Ksiazka> findTop10ByStatusNotOrderByLicznikWypozyczenDesc(StatusKsiazki status);
 
     long countByStatus(com.example.application.data.entity.StatusKsiazki status);
 }
