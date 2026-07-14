@@ -117,27 +117,28 @@ public class DemoDataLoader implements CommandLineRunner {
     }
 
     private Poddziedzina createCategory(String dziedzinaName, String poddziedzinaName) {
-        return bookService.findAllDziedziny().stream()
+        Optional<Poddziedzina> existing = bookService.findAllDziedziny().stream()
+                .filter(d -> d.getNazwa().equals(dziedzinaName))
+                .flatMap(d -> d.getPoddziedziny().stream())
+                .filter(p -> p.getNazwa().equals(poddziedzinaName))
+                .findFirst();
+
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        Dziedzina dziedzina = bookService.findAllDziedziny().stream()
                 .filter(d -> d.getNazwa().equals(dziedzinaName))
                 .findFirst()
-                .flatMap(d -> d.getPoddziedziny().stream()
-                        .filter(p -> p.getNazwa().equals(poddziedzinaName))
-                        .findFirst())
                 .orElseGet(() -> {
-                    Dziedzina dziedzina = bookService.findAllDziedziny().stream()
-                            .filter(d -> d.getNazwa().equals(dziedzinaName))
-                            .findFirst()
-                            .orElseGet(() -> {
-                                Dziedzina nowa = new Dziedzina(dziedzinaName);
-                                bookService.saveDziedzina(nowa);
-                                return nowa;
-                            });
-
-                    Poddziedzina poddziedzina = new Poddziedzina(poddziedzinaName, dziedzina);
-                    dziedzina.getPoddziedziny().add(poddziedzina);
-                    bookService.saveDziedzina(dziedzina);
-                    return poddziedzina;
+                    Dziedzina nowa = new Dziedzina(dziedzinaName);
+                    bookService.saveDziedzina(nowa);
+                    return nowa;
                 });
+
+        Poddziedzina poddziedzina = new Poddziedzina(poddziedzinaName, dziedzina);
+        bookService.savePoddziedzina(poddziedzina);
+        return poddziedzina;
     }
 
     private void createBook(String isbn, String tytul, String wydawnictwo, int rokWydania,
