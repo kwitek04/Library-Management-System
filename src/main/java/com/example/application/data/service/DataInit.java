@@ -8,8 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class DataInit implements CommandLineRunner {
@@ -33,7 +33,7 @@ public class DataInit implements CommandLineRunner {
                 .findFirst()
                 .orElseGet(() -> rolaRepository.save(new Rola("KIEROWNIK")));
 
-        createRoleIfNotFound("BIBLIOTEKARZ");
+        Rola rolaBibliotekarz = createRoleIfNotFound("BIBLIOTEKARZ");
         createRoleIfNotFound("MAGAZYNIER");
 
 
@@ -45,16 +45,23 @@ public class DataInit implements CommandLineRunner {
             admin.setNrTelefonu("000000000");
             admin.setPassword(passwordEncoder.encode("admin")); //
             admin.setEnabled(true);
-            admin.setRole(new HashSet<>(Collections.singletonList(rolaKierownik)));
+            admin.setRole(new HashSet<>(Set.of(rolaKierownik, rolaBibliotekarz)));
 
             pracownicyRepository.save(admin);
             System.out.println(">>> Utworzono konto administratora: admin@admin.pl / admin");
+        } else {
+            Pracownik admin = pracownicyRepository.findByEmail("admin@admin.pl");
+            if (admin != null && admin.getRole().stream().noneMatch(r -> "BIBLIOTEKARZ".equals(r.getName()))) {
+                admin.getRole().add(rolaBibliotekarz);
+                pracownicyRepository.save(admin);
+            }
         }
     }
 
-    private void createRoleIfNotFound(String roleName) {
-        if (rolaRepository.findAll().stream().noneMatch(r -> r.getName().equals(roleName))) {
-            rolaRepository.save(new Rola(roleName));
-        }
+    private Rola createRoleIfNotFound(String roleName) {
+        return rolaRepository.findAll().stream()
+                .filter(r -> r.getName().equals(roleName))
+                .findFirst()
+                .orElseGet(() -> rolaRepository.save(new Rola(roleName)));
     }
 }
