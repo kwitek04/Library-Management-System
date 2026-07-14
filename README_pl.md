@@ -11,6 +11,14 @@
 
 System zarządzania wypożyczalnią książek z wolnym dostępem stworzony w technologii Java (Spring Boot) oraz Vaadin. System usprawnia i automatyzuje działanie wypożyczalni książek. Aplikacja pozwala na rezerwację, wypożyczanie i zwrot książek. Dzięki zaimplementowanej logice biznesowej system automatycznie kontroluje limity wypożyczeń i rezerwacji, zarządza terminami oddania oraz nalicza kary za opóźnienia i zagubienia książek. Aplikacja wyróżnia się rozbudowanym podziałem na role, oraz nowoczesnym interfejsie użytkownika zaprojektowanym z myślą o wygodzie i czytelności.  
 
+## Live Demo
+
+🔗 **[https://library-management-system-gz9i.onrender.com](https://library-management-system-gz9i.onrender.com)**
+
+**Konto demo (Kierownik + Bibliotekarz):**
+* **Email:** `admin@admin.pl`
+* **Hasło:** `admin`
+
 ## Zrzuty ekranu
 
 <div align="center">

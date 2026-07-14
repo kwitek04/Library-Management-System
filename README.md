@@ -13,6 +13,14 @@ A management system for a library, built with Java (Spring Boot) and Vaadin. The
 
 *Note: The application's UI and sample data presented in the screenshots are in Polish.*
 
+## Live Demo
+
+🔗 **[https://library-management-system-gz9i.onrender.com](https://library-management-system-gz9i.onrender.com)**
+
+**Demo account (Manager + Librarian):**
+* **Email:** `admin@admin.pl`
+* **Password:** `admin`
+
 ## Screenshots
 
 <div align="center">
